@@ -1,0 +1,35 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Regulators — NP×IBD Evidence Resource</title><link rel="stylesheet" href="style.css">
+<script src="app.js"></script><script>
+let REG = null, OV = null;
+const SWITCHES = {IKZF1: "manuscript immune switch (UP overlap 161/473)", SPI1: "manuscript immune switch (UP overlap 220)", REL: "manuscript immune switch (UP overlap 190)", JUNB: "manuscript epithelial switch", CEBPD: "manuscript epithelial switch"};
+async function load() {
+  REG = await (await fetch("data/regulons.json")).json();
+  OV = await (await fetch("data/regulon_overlap.json")).json();
+  document.getElementById("status").textContent = "Loaded " + Object.keys(REG).length + " regulons (SCENIC, 278 regulators).";
+}
+function show(tf) {
+  const t = (tf || document.getElementById("tf").value.trim()).toUpperCase();
+  const out = document.getElementById("card"); if (!t) return;
+  const tg = REG[t];
+  if (!tg) { out.innerHTML = '<div class="warn">No regulon named ' + t + " in the SCENIC set (278 regulators). Check spelling.</div>"; return; }
+  let h = '<div class="card"><h3>' + t + (SWITCHES[t] ? ' <span class="badge navy">' + SWITCHES[t] + "</span>" : "") + "</h3>";
+  h += "<p>Regulon size: " + tg.length + " target genes.</p>";
+  const rows = OV.filter(r => r.TF === t).sort((a, b) => a.padj - b.padj);
+  h += "<table><tr><th>Program arm</th><th>Regulon targets</th><th>Overlap</th><th>p</th><th>padj</th></tr>";
+  rows.forEach(r => h += "<tr><td>" + r.program + "</td><td>" + r.n_target + "</td><td>" + r.n_overlap + "</td><td>" + fmtP(r.p) + "</td><td>" + fmtP(r.padj) + (r.padj < 0.05 ? ' <span class="badge up">significant</span>' : "") + "</td></tr>");
+  h += "</table><h3>Targets</h3><p class=\"small\">" + tg.join(", ") + "</p></div>";
+  out.innerHTML = h;
+}
+document.addEventListener("DOMContentLoaded", load);
+</script></head><body>
+<header><h1>NP×IBD Evidence Resource</h1><p data-i18n="site_sub"></p></header>
+<main>
+<h2 data-i18n="nav_regs"></h2>
+<p>Query any SCENIC regulator for its target genes and its overlap with each program arm. <span id="status" class="small"></span></p>
+<p><input type="text" id="tf" placeholder="e.g. IKZF1" onkeydown="if(event.key==='Enter')show()"> <button class="run" onclick="show()">Search</button></p>
+<p>Manuscript switches: <button class="run" onclick="show('IKZF1')">IKZF1</button> <button class="run" onclick="show('SPI1')">SPI1</button> <button class="run" onclick="show('REL')">REL</button> <button class="run" onclick="show('JUNB')">JUNB</button> <button class="run" onclick="show('CEBPD')">CEBPD</button></p>
+<div id="card"></div>
+<p class="small">Regulons from SCENIC (2,511,628 edges → 278 regulators; epithelial 26/278 significant). Overlap p-values are those computed in the manuscript analysis, not recomputed here.</p>
+</main>
+<footer><p data-i18n="footer"></p></footer></body></html>

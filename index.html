@@ -1,0 +1,41 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NP×IBD Evidence Resource</title><link rel="stylesheet" href="style.css">
+<script src="app.js"></script><script>
+Object.assign(I18N, {
+  h_what: {en: "What is this resource?", zh: "这是什么资源？"},
+  p_what: {en: "A queryable evidence matrix for the shared epithelial–immune transcriptional program in nasal polyps (NP) and inflammatory bowel disease (IBD). Every gene carries its logFC and FDR in each nasal and gut cohort, its single-cell, spatial and protein evidence, and its dupilumab treatment direction — all from the published multi-omics analysis, no new statistics.",
+           zh: "鼻息肉（NP）与炎症性肠病（IBD）共享上皮–免疫转录程序的可查询证据矩阵。每个基因附带其在各鼻／肠队列中的 logFC 与 FDR、单细胞、空间与蛋白证据及 dupilumab 治疗方向，全部来自已发表的多组学分析，未引入新统计。"},
+  h_stats: {en: "Program at a glance", zh: "程序一览"},
+  h_layers: {en: "Four evidence layers", zh: "四层证据"},
+  p_layers: {en: "Bulk transcriptomics (discovery + validation) · Single-cell pseudobulk (nasal epithelial/immune, gut epithelial) · Spatial GeoMx (compartment contrast) · Protein (PXD050335 colon mucosa). A layer badge means data are present in that layer; significance is shown separately in the p/FDR columns — presence is not a significance claim.",
+           zh: "Bulk 转录组（发现＋验证）· 单细胞伪 bulk（鼻上皮／免疫、肠上皮）· 空间 GeoMx（区室对比）· 蛋白（PXD050335 结肠黏膜）。层徽标仅表示该层有数据，显著性见 p／FDR 列——有数据不等于显著。"},
+  h_use: {en: "How to use it", zh: "如何使用"},
+  li_genes: {en: "Gene cards — search any symbol for its full evidence row.", zh: "基因证据卡——输入基因名查看完整证据行。"},
+  li_checker: {en: "List checker — paste your up/down lists for enrichment and direction concordance against the program.", zh: "列表检查器——粘贴你的上／下调列表，检验对程序的富集与方向一致性。"},
+  li_regs: {en: "Regulators — query any transcription factor for its regulon and program overlap.", zh: "调控子——查询任意转录因子的调控子及其与程序的重叠。"},
+  li_dl: {en: "Downloads — the full matrix, gene sets, regulons and the R scoring function.", zh: "下载——完整矩阵、基因集、调控子与 R 打分函数。"},
+  h_lim: {en: "Limitations, stated plainly", zh: "坦率说明的局限"},
+  p_lim: {en: "Spatial disease-contrast per-gene tests are 0/169 significant at FDR < 0.05 (40 ROIs, underpowered per gene); the spatial claim is program-level (compartment difference 1.066, p = 1.2×10⁻⁴). Gut single-cell coverage is thin (30/590 genes, 6 vs 3 donors). The nasal validation cohort GSE198950 is inconclusive (control n = 4). GSE193677 validation is program-score-level only and has no per-gene column here.",
+           zh: "空间疾病对比的逐基因检验在 FDR＜0.05 下为 0／169 显著（40 个 ROI，逐基因 power 不足）；空间结论是程序水平（区室差异 1.066，p＝1.2×10⁻⁴）。肠单细胞覆盖较薄（30／590 基因，6 vs 3 供体）。鼻验证队列 GSE198950 结论不确定（对照 n＝4）。GSE193677 验证仅为程序分数水平，本站无逐基因列。"}
+});
+</script></head><body>
+<header><h1>NP×IBD Evidence Resource</h1><p data-i18n="site_sub"></p></header>
+<main>
+<h2 data-i18n="h_what"></h2><p data-i18n="p_what"></p>
+<h2 data-i18n="h_stats"></h2>
+<table><tr><th>Set</th><th>Genes</th></tr>
+<tr><td>NP × UC program</td><td>551 (473 up, 78 down)</td></tr>
+<tr><td>NP × CD program</td><td>226 (174 up, 52 down)</td></tr>
+<tr><td>Core (both diseases)</td><td>187</td></tr>
+<tr><td>Union (matrix rows)</td><td>590</td></tr>
+<tr><td>Evidence layers per gene</td><td>1 layer: 28 · 2 layers: 315 · 3 layers: 217 · 4 layers: 30</td></tr>
+<tr><td>Validation cohorts</td><td>NP: GSE338426 (14v8), GSE198950, GSE267331 (dupilumab 47 pairs / placebo 19 pairs); gut: GSE75214 (n=194), GSE193677 (n=2,490, program-level); sc: GSE235711 (20 donors), GSE116222; spatial: GSE235714 (40 ROIs); protein: PXD050335</td></tr></table>
+<h2 data-i18n="h_layers"></h2><p data-i18n="p_layers"></p>
+<h2 data-i18n="h_use"></h2><ul>
+<li><a href="genes.html" data-i18n="nav_genes"></a> — <span data-i18n="li_genes"></span></li>
+<li><a href="checker.html" data-i18n="nav_checker"></a> — <span data-i18n="li_checker"></span></li>
+<li><a href="regulators.html" data-i18n="nav_regs"></a> — <span data-i18n="li_regs"></span></li>
+<li><a href="download.html" data-i18n="nav_dl"></a> — <span data-i18n="li_dl"></span></li></ul>
+<h2 data-i18n="h_lim"></h2><div class="warn"><p data-i18n="p_lim"></p></div>
+</main>
+<footer><p data-i18n="footer"></p></footer></body></html>

@@ -1,0 +1,41 @@
+date: 2026-10-28 02:58 UTC
+matrix rows: 590 (expect 590)
+in_NPxUC551: 551 (expect 551); in_NPxCD226: 226 (expect 226); in_core187: 187 (expect 187)
+core == UC&CD intersection: TRUE
+NP logFC: shared-file vs NP_DEGs max abs diff: 0 (n=551)
+NP sign matches dir_NP: 590/590
+UC sign matches dir_NP among UC members: 551/551
+CD sign matches dir_NP among CD members: 226/226
+dupilumab per-gene mean logFC: UP-arm -0.0244 (n=480) vs DOWN-arm 0.1508 (n=98); placebo UP 0.1173 vs DOWN -0.0738
+coverage sc_epi_p: tested 93, significant(<0.05) 34
+coverage sc_imm_p: tested 469, significant(<0.05) 38
+coverage gut_sc_epi_p: tested 30, significant(<0.05) 5
+coverage gut_sc_epi_infl_p: tested 30, significant(<0.05) 0
+coverage spatial_CD45_adjP: tested 169, significant(<0.05) 0
+coverage spatial_PanCK_adjP: tested 169, significant(<0.05) 0
+coverage spatial_compartment_FDR: tested 169, significant(<0.05) 154
+coverage protein_padj: tested 112, significant(<0.05) 13
+coverage dupi_FDR: tested 578, significant(<0.05) 88
+coverage GSE198950_padj: tested 23, significant(<0.05) 23
+coverage UC_adjP: tested 590, significant(<0.05) 566
+coverage CD_adjP: tested 590, significant(<0.05) 301
+badge counts: sc 558, spatial 169, protein 112; n_layers_4 distribution: 28/315/217/30
+input md5:
+  5f1c0527135cf8a4eea55fa1890817b0  /home/hatch/workspace/sci-np-ibd/pilot/shared_NPxUC.csv
+  23f23e0d7a828188faf709d994275b76  /home/hatch/workspace/sci-np-ibd/pilot/shared_NPxCD.csv
+  a337709a3068c4626c6dc7f9b50a0af0  /home/hatch/workspace/sci-np-ibd/pilot/shared_NPxIBD921.csv
+  74484fdda44c0a231d39c887987dbbbe  /home/hatch/workspace/sci-np-ibd/pilot/NP_DEGs.csv
+  2aa87c36188636396f0ed5626cbc562d  /home/hatch/workspace/sci-np-ibd/analysis/01_validation/GSE198950_DEGs.csv
+  93973f3545e510488159bc72faf3471a  /home/hatch/workspace/sci-ar-ibd/pilot/IBD_allgenes.csv
+  ebd0a112e0f1dfb54c7b705ef2840601  /home/hatch/workspace/sci-ar-ibd/pilot/IBD_DEGs.csv
+  9d2eeb59fa1824a52777a374e9500e71  /home/hatch/workspace/sci-ar-ibd/pilot/CDileum_allgenes.csv
+  c2a6e4c3d8e5c80d12391bf1293c94c9  /home/hatch/workspace/sci-ar-ibd/pilot/CDileum_DEGs.csv
+  fab4ec44793a02a470d0fecd78c67dbc  /home/hatch/workspace/sci-np-ibd/analysis/06_revision/pseudobulk_gene_tests_epithelial.csv
+  c0c6a20e53c54e2ed7b882829265cbb9  /home/hatch/workspace/sci-np-ibd/analysis/06_revision/pseudobulk_gene_tests_immune.csv
+  ac0ede6fc45c2c213c1d9a7f3ff52df0  /home/hatch/workspace/sci-np-ibd/analysis/06_revision/GSE116222_epithelial_gene_tests.csv
+  7f0f3345deb13935180596cdd0600a20  /home/hatch/workspace/sci-np-ibd/analysis/03_spatial/geomx_compartment_DEGs.csv
+  39ab0601a4353a7e5ba794467fc80789  /home/hatch/workspace/sci-np-ibd/analysis/03_spatial/geomx_disease_DEGs_CD45.csv
+  bf79ccd0122afadfe77e7c4de02c0d4b  /home/hatch/workspace/sci-np-ibd/analysis/03_spatial/geomx_disease_DEGs_PanCK.csv
+  9166ba0ba8cf568ee51b3b5a4063b9e3  /home/hatch/workspace/sci-np-ibd/analysis/08_proteomics/PXD050335_mucosa_IvsN_protein_stats.csv
+  38dae575184aaa81d8157e4baac4385c  /home/hatch/workspace/sci-crswnp-resource/analysis/step2_bulk/de/GSE267331_dupilumab_post_vs_pre.csv
+  b4c46dbed5a9c47534c860cf0e1ec9f7  /home/hatch/workspace/sci-crswnp-resource/analysis/step2_bulk/de/GSE267331_placebo_post_vs_pre.csv

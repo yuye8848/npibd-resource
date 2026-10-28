@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>List checker — NP×IBD Evidence Resource</title><link rel="stylesheet" href="style.css">
+<script src="app.js"></script><script>
+let PROG = null;
+const N_BG = 17464; // NP discovery tested genes (GSE338426 DESeq2, rowSums>=10); documented background
+async function load() { PROG = await (await fetch("data/programs.json")).json(); }
+function parseList(id) {
+  return document.getElementById(id).value.split(/[\n,;\s]+/).map(s => s.trim().toUpperCase()).filter(s => s);
+}
+function run() {
+  if (!PROG) { document.getElementById("res").innerHTML = '<div class="warn">Program data still loading — please retry in a moment.</div>'; return; }
+  const up = [...new Set(parseList("up"))], dn = [...new Set(parseList("dn"))];
+  const out = document.getElementById("res");
+  if (!up.length && !dn.length) { out.innerHTML = '<div class="warn">Paste at least one gene list.</div>'; return; }
+  const sets = ["NPxUC_UP", "NPxUC_DOWN", "NPxCD_UP", "NPxCD_DOWN", "core_UP", "core_DOWN"];
+  let h = "<table><tr><th>Program set</th><th>Size</th><th>Overlap with your UP</th><th>Enrichment p (your UP)</th><th>Overlap with your DOWN</th><th>Enrichment p (your DOWN)</th></tr>";
+  sets.forEach(s => {
+    const set = new Set(PROG[s]);
+    const oU = up.filter(g => set.has(g)).length, oD = dn.filter(g => set.has(g)).length;
+    h += "<tr><td>" + s + "</td><td>" + set.size + "</td><td>" + oU + " / " + up.length + "</td><td>" + (up.length ? fmtP(hyperP(N_BG, set.size, up.length, oU)) : "—") + "</td><td>" + oD + " / " + dn.length + "</td><td>" + (dn.length ? fmtP(hyperP(N_BG, set.size, dn.length, oD)) : "—") + "</td></tr>";
+  });
+  h += "</table>";
+  // direction concordance vs the two full programs
+  const conc = (prog_up, prog_dn) => {
+    const U = new Set(PROG[prog_up]), D = new Set(PROG[prog_dn]);
+    const upC = up.filter(g => U.has(g)).length, upX = up.filter(g => D.has(g)).length;
+    const dnC = dn.filter(g => D.has(g)).length, dnX = dn.filter(g => U.has(g)).length;
+    return "your UP: " + upC + " concordant (in program UP) vs " + upX + " discordant (in program DOWN); your DOWN: " + dnC + " concordant vs " + dnX + " discordant.";
+  };
+  h += "<h3>Direction concordance</h3><p>NP×UC — " + conc("NPxUC_UP", "NPxUC_DOWN") + "</p><p>NP×CD — " + conc("NPxCD_UP", "NPxCD_DOWN") + "</p>";
+  h += '<p class="small">Background N = ' + N_BG + " (NP discovery tested genes). Hypergeometric enrichment, one-sided. Round-trip check: pasting the NP×UC_UP list itself gives 473/473 overlap with p &lt; 1e-300 and 100% concordance.</p>";
+  out.innerHTML = h;
+}
+function roundtrip() {
+  if (!PROG) { document.getElementById("res").innerHTML = '<div class="warn">Program data still loading — please retry in a moment.</div>'; return; }
+  document.getElementById("up").value = PROG.NPxUC_UP.join("\n");
+  document.getElementById("dn").value = PROG.NPxUC_DOWN.join("\n");
+  run();
+}
+document.addEventListener("DOMContentLoaded", load);
+</script></head><body>
+<header><h1>NP×IBD Evidence Resource</h1><p data-i18n="site_sub"></p></header>
+<main>
+<h2 data-i18n="nav_checker"></h2>
+<p>Paste your up-regulated and down-regulated gene lists (one symbol per line). The checker tests enrichment against each program arm and reports direction concordance — in your browser, no data leave this page.</p>
+<p>Up-regulated list:</p><textarea id="up" placeholder="One HGNC symbol per line, e.g.&#10;MMP9&#10;LCN2"></textarea>
+<p>Down-regulated list:</p><textarea id="dn" placeholder="One HGNC symbol per line"></textarea>
+<p><button class="run" onclick="run()">Check</button> <button class="run" onclick="roundtrip()">Load NP×UC program as round-trip test</button></p>
+<div id="res"></div>
+</main>
+<footer><p data-i18n="footer"></p></footer></body></html>

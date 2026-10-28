@@ -1,0 +1,56 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gene cards — NP×IBD Evidence Resource</title><link rel="stylesheet" href="style.css">
+<script src="app.js"></script><script>
+let ROWS = {};
+function v(x) { return (x === "" || x === undefined || x === "NA") ? "—" : x; }
+function num(x, d) { const n = parseFloat(x); return isNaN(n) ? "—" : n.toFixed(d === undefined ? 4 : d); }
+function badge(txt, cls) { return '<span class="badge ' + cls + '">' + txt + "</span>"; }
+async function load() {
+  const t = await (await fetch("data/evidence_matrix.csv")).text();
+  parseCSV(t).forEach(r => ROWS[r.SYMBOL.toUpperCase()] = r);
+  document.getElementById("status").textContent = "Loaded " + Object.keys(ROWS).length + " genes.";
+}
+function show() {
+  const sym = document.getElementById("gene").value.trim().toUpperCase();
+  const out = document.getElementById("card"); if (!sym) return;
+  if (!Object.keys(ROWS).length) { out.innerHTML = '<div class="warn">Data still loading — please retry in a moment.</div>'; return; }
+  const r = ROWS[sym];
+  if (!r) { out.innerHTML = '<div class="warn">Not in the 590-gene matrix. This means the gene is not a member of the NP×UC or NP×CD shared program — not that it is biologically irrelevant. Check spelling (HGNC symbol, e.g. IL33, MMP9, CLC).</div>'; return; }
+  const dir = d => d === "1" ? "UP" : (d === "-1" ? "DOWN" : "—");
+  let h = '<div class="card"><h3>' + r.SYMBOL + " " + (r.in_NPxUC551 === "1" ? badge("NP×UC " + dir(r.dir_NP), r.dir_NP === "1" ? "up" : "down") : "")
+    + (r.in_NPxCD226 === "1" ? badge("NP×CD " + dir(r.dir_NP), r.dir_NP === "1" ? "up" : "down") : "")
+    + (r.in_core187 === "1" ? badge("CORE 187", "navy") : "") + "</h3>";
+  h += "<p>Layers present: " + (r.badge_bulk === "1" ? badge("bulk", "grey") : "") + (r.badge_sc === "1" ? badge("single-cell", "grey") : "")
+    + (r.badge_spatial === "1" ? badge("spatial", "grey") : "") + (r.badge_protein === "1" ? badge("protein", "grey") : "")
+    + " (" + r.n_layers_4 + " of 4 layers)</p>";
+  const tbl = (title, pairs) => { let s = "<h3>" + title + "</h3><table><tr><th>Measure</th><th>Value</th></tr>";
+    pairs.forEach(([k, val]) => s += "<tr><td>" + k + "</td><td>" + val + "</td></tr>"); return s + "</table>"; };
+  h += tbl("Bulk transcriptomics", [["NP (GSE338426) logFC / FDR", num(r.NP_logFC) + " / " + num(r.NP_padj, 6)],
+    ["Nasal validation GSE198950 logFC / FDR", num(r.GSE198950_logFC) + " / " + num(r.GSE198950_padj, 6)],
+    ["UC (GSE75214) logFC / adj.P / DEG", num(r.UC_logFC) + " / " + num(r.UC_adjP, 6) + " / " + v(r.UC_isDEG)],
+    ["CD ileal (GSE75214) logFC / adj.P / DEG", num(r.CD_logFC) + " / " + num(r.CD_adjP, 6) + " / " + v(r.CD_isDEG)]]);
+  h += tbl("Single-cell pseudobulk", [["Nasal epithelial diff / p", num(r.sc_epi_diff) + " / " + num(r.sc_epi_p, 6)],
+    ["Nasal immune diff / p", num(r.sc_imm_diff) + " / " + num(r.sc_imm_p, 6)],
+    ["Gut epithelial (UC vs healthy) diff / p", num(r.gut_sc_epi_diff) + " / " + num(r.gut_sc_epi_p, 6)],
+    ["Gut epithelial (inflamed vs healthy) diff / p", num(r.gut_sc_epi_infl_diff) + " / " + num(r.gut_sc_epi_infl_p, 6)]]);
+  h += tbl("Spatial GeoMx (GSE235714)", [["CD45 compartment logFC / adj.P", num(r.spatial_CD45_logFC) + " / " + num(r.spatial_CD45_adjP, 6)],
+    ["PanCK compartment logFC / adj.P", num(r.spatial_PanCK_logFC) + " / " + num(r.spatial_PanCK_adjP, 6)],
+    ["Compartment contrast logFC / FDR", num(r.spatial_compartment_logFC) + " / " + num(r.spatial_compartment_FDR, 6)]]);
+  h += tbl("Protein + treatment direction", [["Protein (PXD050335) logFC / p / padj", num(r.protein_logFC) + " / " + num(r.protein_p, 6) + " / " + num(r.protein_padj, 6)],
+    ["Dupilumab post-vs-pre logFC / FDR", num(r.dupi_logFC) + " / " + num(r.dupi_FDR, 6)],
+    ["Placebo post-vs-pre logFC / FDR", num(r.placebo_logFC) + " / " + num(r.placebo_FDR, 6)],
+    ["Dupilumab significant", v(r.dupi_sig)]]);
+  h += '<p class="small">Directions: NP direction is the discovery direction (dir_NP). UC/CD directions are shown only for members. "—" means no data in that layer (not zero effect). Layer badges mean data present, not significance.</p></div>';
+  out.innerHTML = h;
+}
+document.addEventListener("DOMContentLoaded", load);
+</script></head><body>
+<header><h1>NP×IBD Evidence Resource</h1><p data-i18n="site_sub"></p></header>
+<main>
+<h2 data-i18n="nav_genes"></h2>
+<p>Enter an HGNC gene symbol (e.g. MMP9, LCN2, S100A8, CLC, IL33). <span id="status" class="small"></span></p>
+<p><input type="text" id="gene" placeholder="e.g. MMP9" onkeydown="if(event.key==='Enter')show()"> <button class="run" onclick="show()">Search</button></p>
+<div id="card"></div>
+<p class="small">Try: MMP9, S100A8, S100A9 (protein leaders that are program members), CLC, CCL18 (top NP genes). Note: protein-only leaders such as LCN2 and LYZ are not members of the transcript program and have no card by design — the matrix covers the 590 program genes only.</p>
+</main>
+<footer><p data-i18n="footer"></p></footer></body></html>
