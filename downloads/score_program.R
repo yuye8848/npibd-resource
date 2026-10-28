@@ -21,6 +21,9 @@
 # Duplicate symbols in expr are collapsed by keeping the row with maximum variance
 # across samples (documented choice; manuscript matrices used here already have unique
 # symbols, so this path does not trigger on manuscript data).
+#
+# Demo: running this file directly with SCORE_PROGRAM_DEMO=1 executes a small
+# synthetic example (not manuscript data) at the end of the file.
 
 score_program <- function(expr, sets, method = c("zmean", "ssgsea")) {
   method <- match.arg(method)
@@ -85,4 +88,21 @@ load_manuscript_sets <- function(pilot_dir = "/home/hatch/workspace/sci-np-ibd/p
     NPxCD_UP = cd$SYMBOL[cd$dir_NP == 1],
     NPxCD_DOWN = cd$SYMBOL[cd$dir_NP == -1]
   )
+}
+
+# ---- Demo (synthetic example; runs ONLY when SCORE_PROGRAM_DEMO=1) ----
+# Not manuscript data: a tiny synthetic matrix (20 genes x 4 samples) showing
+# the zmean call shape and combine_program_scores(). Run it with:
+#   SCORE_PROGRAM_DEMO=1 Rscript score_program.R
+# Sourcing this file (manuscript code, self-tests) never triggers the demo.
+if (identical(Sys.getenv("SCORE_PROGRAM_DEMO"), "1")) {
+  set.seed(1)
+  demo_genes <- paste0("G", sprintf("%02d", 1:20))
+  demo_expr <- matrix(stats::rnorm(20 * 4, mean = 8, sd = 1), nrow = 20,
+                      dimnames = list(demo_genes, paste0("S", 1:4)))
+  demo_sets <- list(DEMO_UP = demo_genes[1:10], DEMO_DOWN = demo_genes[11:20])
+  demo_sc <- score_program(demo_expr, demo_sets, method = "zmean")
+  print(demo_sc)
+  print(combine_program_scores(demo_sc, "DEMO_UP", "DEMO_DOWN"))
+  cat("score_program demo OK (synthetic data, not manuscript data)\n")
 }
